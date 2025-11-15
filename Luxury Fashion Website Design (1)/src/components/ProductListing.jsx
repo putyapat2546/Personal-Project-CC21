@@ -318,17 +318,19 @@ export function ProductListing() {
               />
               {/* Lists Inside Filter */}
 
-              <motion.aside
-    initial={{ x: -240 }}
-    animate={{ x: 0 }}
-    exit={{ x: -240 }}
-    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-    // Reduced width slightly and kept positioning
-    className="fixed left-0 top-24 bottom-0 w-64 bg-white shadow-2xl z-50 overflow-y-auto p-10 "
->
+                <motion.aside
+          initial={{ x: -240 }}
+          animate={{ x: 0 }}
+          exit={{ x: -240 }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          className="fixed left-0 top-0 bottom-0 w-64 bg-white shadow-2xl z-50 overflow-y-auto p-10 pt-12"
+        >
     {/* Use consistent vertical padding (py-5) and smaller horizontal padding (px-5) */}
     <div className="py-5 px-5">
-        
+        {/* Maison Eight heading at top of filterbar */}
+        <div className="mb-6 text-center">
+          <h2 className="text-black font-bold tracking-[0.2em] text-lg">Maison Eight</h2>
+        </div>
         {/* Gender Filter (First section uses top padding) */}
         <div className="pt-2 pb-5 border-b border-gray-200">
             <h3 className="font-medium mb-3 tracking-wider text-gray-700 text-xs">
@@ -353,7 +355,7 @@ export function ProductListing() {
         </div>
 
         {/* Category Filter */}
-        <div className="py-5 border-b border-gray-200">
+        <div className="py-5 border-b border-gray-200 mt-6">
             <h3 className="font-medium mb-3 tracking-wider text-gray-700 text-xs">
                 CATEGORY
             </h3>
@@ -387,7 +389,7 @@ export function ProductListing() {
         </div>
 
         {/* Brand Filter - Added max height and scroll to maintain vertical rhythm */}
-        <div className="py-5 border-b border-gray-200">
+        <div className="py-5 border-b border-gray-200 mt-6">
             <h3 className="font-medium mb-3 tracking-wider text-gray-700 text-xs">
                 BRAND
             </h3>
@@ -425,7 +427,7 @@ export function ProductListing() {
         </div>
 
         {/* Color Filter - Added max height and scroll */}
-        <div className="py-5">
+        <div className="py-5 mt-6">
             <h3 className="font-medium mb-3 tracking-wider text-gray-700 text-xs">
                 COLOR
             </h3>
