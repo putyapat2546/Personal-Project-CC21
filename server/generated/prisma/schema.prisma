@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  superadmin
+  editor
+  moderator
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+/////////////////////////////////
+model User {
+  user_id       Int     @id @default(autoincrement())
+  full_name     String
+  email         String  @unique
+  password_hash String
+  height        Int?
+  weight        Int?
+  skin_tone     String?
+
+  selected_persona Int? // FK → Persona
+  created_at       DateTime @default(now())
+
+  persona Persona? @relation(fields: [selected_persona], references: [persona_id])
+
+  carts          Cart[]
+  orders         Order[]
+  tryons         VirtualTryOn[]
+  customizations Customization[]
+  reviews        Review[]
+}
+
+model Persona {
+  persona_id   Int     @id @default(autoincrement())
+  persona_name String // Absolute Luxurer
+  description  String?
+
+  users    User[]
+  products Product[] // Each product has 1 persona
+}
+
+model Admin {
+  admin_id      Int       @id @default(autoincrement())
+  full_name     String
+  email         String    @unique
+  password_hash String
+  role          AdminRole @default(editor)
+  created_at    DateTime  @default(now())
+
+  added_products  Product[]
+  verified_brands Brand[]
+}
+
+model Brand {
+  brand_id    Int     @id @default(autoincrement())
+  brand_name  String
+  country     String?
+  verified_by Int? // FK → Admin
+
+  admin    Admin?    @relation(fields: [verified_by], references: [admin_id])
+  products Product[]
+}
+
+model Product {
+  product_id   Int     @id @default(autoincrement())
+  product_name String
+  brand_id     Int
+  persona_id   Int // Each product belongs to ONE persona category
+  category     String
+  price        Float
+  color        String?
+  size         String?
+  fit          String?
+  added_by     Int?
+
+  brand   Brand   @relation(fields: [brand_id], references: [brand_id])
+  persona Persona @relation(fields: [persona_id], references: [persona_id])
+  admin   Admin?  @relation(fields: [added_by], references: [admin_id])
+
+  reviews        Review[]
+  customizations Customization[]
+  tryons         VirtualTryOn[]
+  cart_items     CartItem[]
+}
+
+model Cart {
+  cart_id    Int        @id @default(autoincrement())
+  user_id    Int
+  created_at DateTime   @default(now())
+  user       User       @relation(fields: [user_id], references: [user_id])
+  items      CartItem[]
+}
+
+model CartItem {
+  cart_item_id Int   @id @default(autoincrement())
+  cart_id      Int
+  product_id   Int
+  quantity     Int
+  subtotal     Float
+
+  cart    Cart    @relation(fields: [cart_id], references: [cart_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+}
+
+model Order {
+  order_id         Int           @id @default(autoincrement())
+  user_id          Int
+  total_price      Float
+  payment_status   PaymentStatus @default(PENDING)
+  shipping_address String
+  order_date       DateTime      @default(now())
+
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+model VirtualTryOn {
+  tryon_id           Int   @id @default(autoincrement())
+  user_id            Int
+  product_id         Int
+  outfit_combination Json?
+
+  user    User    @relation(fields: [user_id], references: [user_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+}
+
+model Customization {
+  custom_id      Int     @id @default(autoincrement())
+  user_id        Int
+  product_id     Int
+  fit_preference String?
+  color_choice   String?
+
+  user    User    @relation(fields: [user_id], references: [user_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+}
+
+model Review {
+  review_id  Int     @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  rating     Int
+  comment    String?
+
+  user    User    @relation(fields: [user_id], references: [user_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+}

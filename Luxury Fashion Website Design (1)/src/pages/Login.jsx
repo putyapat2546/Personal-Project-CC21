@@ -14,9 +14,70 @@ export function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin?.();
-    navigate("/home"); // go to home
+    // If in sign-up mode, call register endpoint; otherwise call login
+    if (isSignUp) {
+      handleRegister();
+    } else {
+      handleLogin();
+    }
   };
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  async function handleRegister() {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: name, email, password }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMessage(body.error || 'Registration failed');
+        setLoading(false);
+        return;
+      }
+      setMessage(body.message || 'Registration successful — please sign in');
+      setIsSignUp(false);
+    } catch (err) {
+      console.error(err);
+      setMessage('Network error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLogin() {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMessage(body.error || 'Login failed');
+        setLoading(false);
+        return;
+      }
+      // store token and navigate
+      if (body.token) {
+        localStorage.setItem('auth_token', body.token);
+      }
+      onLogin?.(body.user);
+      navigate('/home');
+    } catch (err) {
+      console.error(err);
+      setMessage('Network error');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-8 py-12">

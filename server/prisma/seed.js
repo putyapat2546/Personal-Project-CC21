@@ -1,92 +1,23 @@
-import { PrismaClient } from '../generated/prisma/index.js';
-import bcrypt from 'bcrypt';
+import prisma from '../src/config/prisma.config.js'
+import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient();
+const hashedPassword = bcrypt.hashSync('123456', 8)
 
-async function main() {
-  console.log('🌱 Starting seed...');
+const userData = [
+ { firstName: 'Andy', lastName: 'Codecamp', password: hashedPassword, email: 'andy@ggg.mail',
+     profileImage: 'https://www.svgrepo.com/show/420364/avatar-male-man.svg' }, 
+ { firstName: 'Bobby', lastName: 'Codecamp', password: hashedPassword, email: 'bobby@ggg.mail',
+     profileImage: 'https://www.svgrepo.com/show/420319/actor-chaplin-comedy.svg'},
+ { firstName: 'Candy', lastName: 'Codecamp', password: hashedPassword, mobile: '1111111111',
+     profileImage: 'https://www.svgrepo.com/show/420327/avatar-child-girl.svg'},
+ { firstName: 'Danny', lastName: 'Codecamp', password: hashedPassword, mobile: '2222222222',
+     profileImage: 'https://www.svgrepo.com/show/420314/builder-helmet-worker.svg'},
+]
 
-  // Hash passwords for demo users
-  const hashedPassword = await bcrypt.hash('123456', 10);
-
-  // Create demo users
-  const user1 = await prisma.user.upsert({
-    where: { email: 'user1@mail.com' },
-    update: {},
-    create: {
-      email: 'user1@mail.com',
-      name: 'John Doe',
-      password: hashedPassword,
-    },
-  });
-
-  const user2 = await prisma.user.upsert({
-    where: { email: 'user2@mail.com' },
-    update: {},
-    create: {
-      email: 'user2@mail.com',
-      name: 'Jane Smith',
-      password: hashedPassword,
-    },
-  });
-
-  console.log(`Created users: ${user1.name}, ${user2.name}`);
-
-  // Create demo markers
-  const markers = [
-    {
-      title: 'Bangkok Grand Palace',
-      description: 'Historic royal palace in Bangkok, Thailand',
-      lat: 13.75,
-      lng: 100.4913,
-      userId: user1.id,
-    },
-    {
-      title: 'Wat Pho Temple',
-      description: 'Famous temple with reclining Buddha statue',
-      lat: 13.7465,
-      lng: 100.4927,
-      userId: user1.id,
-    },
-    {
-      title: 'Chatuchak Weekend Market',
-      description: 'Large weekend market in Bangkok',
-      lat: 13.7998,
-      lng: 100.5504,
-      userId: user2.id,
-    },
-    {
-      title: 'Wat Arun',
-      description: 'Temple of Dawn on the Chao Phraya River',
-      lat: 13.7436,
-      lng: 100.4889,
-      userId: user2.id,
-    },
-    {
-      title: 'Jim Thompson House',
-      description: 'Museum showcasing traditional Thai architecture',
-      lat: 13.746,
-      lng: 100.5307,
-      userId: user1.id,
-    },
-  ];
-
-  for (const markerData of markers) {
-    const marker = await prisma.marker.create({
-      data: markerData,
-    });
-    console.log(`Created marker: ${marker.title}`);
-  }
-
-  console.log('✅ Seed completed successfully!');
+async function seedDB() {
+	await prisma.user.createMany({ data: userData, skipDuplicates: true})
 }
 
-main()
-  .catch((e) => {
-    console.error('❌ Seed failed:');
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+seedDB().then(console.log('DB Seed successful'))
+.catch(err => console.log(err))
+.finally(prisma.$disconnect())

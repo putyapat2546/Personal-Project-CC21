@@ -1,0 +1,68 @@
+#UnLike
+DELETE  http://localhost:8899/api/post/2/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMzE0NTQyLCJleHAiOjE3NjM2MTA1NDJ9.4YEEDKo6nzuJ7QLbn6DP5VoaZiNMihUhsqnS-oT30uk
+
+###
+
+#Like
+POST http://localhost:8899/api/post/2/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMzE0NTQyLCJleHAiOjE3NjM2MTA1NDJ9.4YEEDKo6nzuJ7QLbn6DP5VoaZiNMihUhsqnS-oT30uk
+content-type: application/json
+
+###
+
+# Update Post
+PUT http://localhost:8899/api/post/29
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMjY1MDEzLCJleHAiOjE3NjM1NjEwMTN9.ucPSz3HzZ-1CM0XjSezaaaxzkAGB1NZar8nMi3Dq_98
+content-type: application/json
+
+{
+	"message" : "We are fullstack dev next month",
+	"image" : ""
+}
+
+###
+
+#Delete post
+DELETE http://localhost:8899/api/post/24
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMjY1MDEzLCJleHAiOjE3NjM1NjEwMTN9.ucPSz3HzZ-1CM0XjSezaaaxzkAGB1NZar8nMi3Dq_98
+
+###
+
+# Get all posts
+GET http://localhost:8899/api/post
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMzE0NTQyLCJleHAiOjE3NjM2MTA1NDJ9.4YEEDKo6nzuJ7QLbn6DP5VoaZiNMihUhsqnS-oT30uk
+
+###
+GET http://localhost:8899/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzYyMjY1MDEzLCJleHAiOjE3NjM1NjEwMTN9.ucPSz3HzZ-1CM0XjSezaaaxzkAGB1NZar8nMi3Dq_98
+
+###
+
+# Register api
+POST http://localhost:8899/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+ "identity" : "1111111116",
+#  "identity" : "someone@ggg.mail",
+ "firstName" : "someone",
+ "lastName" : "codecamp",
+ "password" : "123456",
+ "confirmPassword" : "123456"
+}
+###
+
+# Login api
+POST http://localhost:8899/api/auth/login HTTP/1.1
+content-type: application/json
+
+{
+ "identity" : "2222222222",
+ "password" : "123456"
+}
+###
+
+
+
+

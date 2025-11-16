@@ -1,39 +1,41 @@
-// server/src/app.js
+import express from 'express'
+import cors from 'cors'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
+import morgan from 'morgan'
+import authRoute from './routes/auth.route.js'
+import createHttpError from 'http-errors'
+import errorMiddleware from './middlewares/error.middleware.js'
+import notFoundMiddleware from './middlewares/notFound.middleware.js'
+import shutdownUtil from './utils/shutdown.util.js'
 
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import swaggerUi from 'swagger-ui-express';
-import { swaggerDoc } from './configs/swagger.config.js';
-import { notFoundMiddleware } from './middlewares/notfound.middleware.js';
-import { zodErrorMiddleware } from './middlewares/errors/zod-error.middleware.js';
-import { defaultErrorMiddleware } from './middlewares/errors/default-error.middleware.js';
-import { authRouter } from './routes/auth.route.js';
-import { prismaErrorMiddleware } from './middlewares/errors/prisma-error.middleware.js';
-import { jwtErrorMiddleware } from './middlewares/errors/jwt-error.middleware.js';
+const app = express()
+app.use(morgan("dev"))
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max : 100,
+}))
+app.use(helmet())
 
-const app = express();
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:3000"], // allowed origins
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // allow cookies if needed
+}));
 
-// Middleware
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json())
 
-// Routes
-app.use('/auth', authRouter);
+app.use('/api/auth', authRoute)
 
-// Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
-// not found middleware
-app.use(notFoundMiddleware);
+app.use(notFoundMiddleware)
+app.use(errorMiddleware)
 
-// Error handling middleware
-app.use(prismaErrorMiddleware);
-app.use(jwtErrorMiddleware);
-app.use(zodErrorMiddleware);
+process.on('SIGINT', ()=> shutdownUtil('SIGINT')) // CTRL+C
+process.on('SIGTERM', ()=> shutdownUtil('SIGTERM')) // normal kill process
 
-// Default error handler
-app.use(defaultErrorMiddleware);
+// Catch unhandled errors
+process.on("uncaughtException", ()=>  shutdownUtil('uncaughtException'))
+process.on("unhandledRejection", ()=> shutdownUtil('unhandledRejection'))
 
-export default app;
+export default app
