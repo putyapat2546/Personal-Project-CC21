@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from 'motion/react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { ShoppingBag, User, Heart, ChevronLeft } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '../components/ui/button';
 const productsData = {
   1: {
     id: 1,

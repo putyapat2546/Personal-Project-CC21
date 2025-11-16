@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { ShoppingBag, User, X, SlidersHorizontal } from "lucide-react";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../components/ui/checkbox";
 
 const products = [
   {

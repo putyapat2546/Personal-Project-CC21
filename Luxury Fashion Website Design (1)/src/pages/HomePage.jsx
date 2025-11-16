@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { ShoppingBag, User, RotateCcw } from "lucide-react";
 
 const personaNames = {
