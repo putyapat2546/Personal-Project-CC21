@@ -1,58 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Minus, Plus, X, ShoppingBag, User } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 export function Cart() {
   const navigate = useNavigate();
-
-  const [cartItems, setCartItems] = useState([
-    {
-      id: "1",
-      name: "Silk Evening Gown",
-      price: 2850,
-      size: "M",
-      color: "Black",
-      quantity: 1,
-      image:
-        "https://images.unsplash.com/photo-1589986993357-6f9a171e02d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    },
-    {
-      id: "2",
-      name: "Cashmere Overcoat",
-      price: 3200,
-      size: "L",
-      color: "Camel",
-      quantity: 1,
-      image:
-        "https://images.unsplash.com/photo-1575201046471-082b5c1a1e79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    },
-    {
-      id: "3",
-      name: "Leather Handbag",
-      price: 1650,
-      size: "One Size",
-      color: "Cognac",
-      quantity: 2,
-      image:
-        "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    },
-  ]);
-
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -168,7 +124,7 @@ export function Cart() {
                           </div>
 
                           <button
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeFromCart(item.id)}
                             className="text-gray-400 hover:text-black transition-colors h-fit"
                           >
                             <X size={20} />

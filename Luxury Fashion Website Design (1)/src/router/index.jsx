@@ -17,6 +17,7 @@ import Checkout from '../pages/Checkout';
 import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
 import { Cart } from '../pages/Cart';
+import { AdminAddProduct } from '../pages/AdminAddProduct';
 
 export const router = createBrowserRouter([
   {
@@ -48,7 +49,10 @@ export const router = createBrowserRouter([
       // Cart
       { path: 'cart', element: <Cart /> },
 
-      // Not found → redirect
+      // Admin
+      { path: 'admin/add-product', element: <AdminAddProduct /> },
+
+      // Not found -> redirect
       { path: '*', element: <Navigate to="/" replace /> },
     ],
   },

@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { ShoppingBag, User, Heart, ChevronLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useCart } from '../context/CartContext';
 const productsData = {
   1: {
     id: 1,
@@ -72,12 +73,24 @@ const productsData = {
 export function ProductDetail() {
   const { productId } = useParams(); 
   const navigate = useNavigate();
+  const { addToCart, cartCount } = useCart();
 
   const product = productsData[productId] || productsData[1];
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+    addToCart(product, selectedSize, selectedColor);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F8F8]">
@@ -270,11 +283,11 @@ export function ProductDetail() {
                 {/* ADD TO BAG */}
                 <div className="flex gap-4 mb-8">
                   <Button
-                    onClick={() => navigate('/cart')}
-                    className="flex-1 bg-black hover:bg-[#C6A664] text-white py-6 tracking-[0.2em] transition-all duration-300"
+                    onClick={handleAddToCart}
+                    className={`flex-1 py-6 tracking-[0.2em] transition-all duration-300 ${addedToCart ? 'bg-[#C6A664]' : 'bg-black hover:bg-[#C6A664]'} text-white`}
                     style={{ fontSize: '0.875rem' }}
                   >
-                    ADD TO BAG
+                    {addedToCart ? '✓ ADDED TO BAG' : 'ADD TO BAG'}
                   </Button>
 
                   <button
