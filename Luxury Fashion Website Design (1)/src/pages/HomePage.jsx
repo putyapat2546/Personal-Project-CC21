@@ -2,7 +2,8 @@ import React from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { ShoppingBag, User, RotateCcw } from "lucide-react";
+import { ShoppingBag, RotateCcw } from "lucide-react";
+import { UserMenu } from "../components/UserMenu";
 
 const personaNames = {
   "absolute-luxurer": "Absolute Luxurer",
@@ -90,12 +91,9 @@ export function HomePage({ personaId }) {
             >
               <ShoppingBag size={20} />
             </button>
-            <button
-              onClick={() => navigate("/login")}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            
+            {/* User Menu */}
+            <UserMenu />
           </div>
         </div>
       </nav>

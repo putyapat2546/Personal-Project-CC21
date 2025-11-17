@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { ShoppingBag, User, X, SlidersHorizontal } from "lucide-react";
+import { ShoppingBag, X, SlidersHorizontal } from "lucide-react";
 import { Checkbox } from "../components/ui/checkbox";
+import { UserMenu } from "../components/UserMenu";
 
 const products = [
   {
@@ -269,12 +270,9 @@ export function ProductListing() {
             >
               <ShoppingBag size={20} />
             </button>
-            <button
-              onClick={() => navigate("/login")}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            
+            {/* User Menu */}
+            <UserMenu />
           </div>
         </div>
       </nav>

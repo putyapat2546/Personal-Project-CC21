@@ -4,14 +4,18 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "../validation/schema";
+import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Login({ onLogin }) {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -44,11 +48,19 @@ export function Login({ onLogin }) {
         return;
       }
       // store token and navigate
-      if (body.token) {
-        localStorage.setItem('auth_token', body.token);
+      if (body.token && body.user) {
+        login(body.token, body.user);
+        onLogin?.(body.user);
+        
+        // Check if user has selected a persona
+        if (body.user.selected_persona) {
+          // User has already selected a persona, go to home
+          navigate('/home');
+        } else {
+          // User hasn't selected a persona yet, go to character selection
+          navigate('/select');
+        }
       }
-      onLogin?.(body.user);
-      navigate('/home');
     } catch (err) {
       console.error(err);
       setMessage('Network error');
@@ -121,14 +133,24 @@ export function Login({ onLogin }) {
               >
                 PASSWORD
               </label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border-gray-300 focus:border-[#C6A664] focus:ring-[#C6A664]"
-                required
-                disabled={loading}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full border-gray-300 focus:border-[#C6A664] focus:ring-[#C6A664] pr-10"
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {/* Forgot Password */}

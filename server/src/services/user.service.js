@@ -15,6 +15,16 @@ export const createUser = async (userData) => {
 }
 
 export const getUserBy = async (key, value) => {
+  // Handle different query types
+  if (key === 'user_id' || key === 'id') {
+    return await prisma.user.findUnique({
+      where: {
+        user_id: value
+      }
+    })
+  }
+  
+  // For other unique fields like email
   const user = await prisma.user.findUnique({
     where: {
       [key]: value
@@ -28,6 +38,19 @@ export const getUserById = async (id) => {
   const user = await prisma.user.findUnique({
     where: {
       user_id: id
+    }
+  })
+  
+  return user
+}
+
+export const updateUserPersona = async (userId, personaId) => {
+  const user = await prisma.user.update({
+    where: {
+      user_id: userId
+    },
+    data: {
+      selected_persona: personaId
     }
   })
   

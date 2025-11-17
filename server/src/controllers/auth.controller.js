@@ -4,7 +4,7 @@ import createHttpError from "http-errors"
 import identityKeyUtil from "../utils/identity-key.util.js"
 // import prisma from "../config/prisma.config.js"
 import { loginSchema, registerSchema } from '../validations/schema.js'
-import { createUser, getUserBy } from '../services/user.service.js'
+import { createUser, getUserBy, updateUserPersona } from '../services/user.service.js'
 
 export const register = async (req, res, next) => {
   try {
@@ -71,5 +71,35 @@ export const login = async (req, res, next) => {
 
 export const getMe = (req, res) => {
   res.json({ user: req.user })
+}
+
+export const updatePersona = async (req, res, next) => {
+  try {
+    const { personaId } = req.body
+    
+    if (!req.user) {
+      return next(createHttpError[401]('User not authenticated'))
+    }
+    
+    const userId = req.user.user_id
+    
+    if (!personaId) {
+      return next(createHttpError[400]('Persona ID is required'))
+    }
+    
+    console.log('Updating persona for user:', userId, 'to persona:', personaId)
+    
+    const updatedUser = await updateUserPersona(userId, personaId)
+    
+    const { password_hash, created_at, ...userData } = updatedUser
+    
+    res.json({
+      message: 'Persona updated successfully',
+      user: userData
+    })
+  } catch (error) {
+    console.error('Error updating persona:', error)
+    next(error)
+  }
 }
 

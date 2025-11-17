@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const personas = [
   { id: 'absolute-luxurer', name: 'Absolute Luxurer', tagline: 'Where heritage meets contemporary opulence', image: 'https://images.unsplash.com/photo-1733736075345-55db261a8ac0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
@@ -13,9 +14,22 @@ const personas = [
   { id: 'classpirational', name: 'Classpirational', tagline: 'Aspirational elegance within reach', image: 'https://images.unsplash.com/photo-1679419930974-e8171969aea0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
 ];
 
+// Map persona IDs to database persona_id
+const personaIdMap = {
+  'absolute-luxurer': 1,
+  'megacitier': 2,
+  'social-wearer': 3,
+  'experiencer': 4,
+  'little-prince': 5,
+  'fashionista': 6,
+  'status-seeker': 7,
+  'classpirational': 8
+};
+
 export function CharacterReveal() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAuthenticated, updateUser } = useAuth();
 
   // Get the selected persona ID from state
   const { personaId } = location.state || {};
@@ -28,14 +42,41 @@ export function CharacterReveal() {
       return;
     }
 
+    const savePersonaAndNavigate = async () => {
+      // If user is logged in, save their persona selection to the backend
+      if (isAuthenticated && user) {
+        try {
+          const token = localStorage.getItem('auth_token');
+          const personaDatabaseId = personaIdMap[personaId];
+          
+          const response = await fetch('http://localhost:3001/api/auth/persona', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ personaId: personaDatabaseId })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Update user data in context and localStorage
+            updateUser(data.user);
+          }
+        } catch (error) {
+          console.error('Failed to save persona:', error);
+        }
+      }
+      
+      // Navigate to home after saving
+      navigate('/home');
+    };
+
     // Automatically navigate after 4 seconds
-    const timer = setTimeout(() => {
-      // Next page logic here (e.g., go to experience or main app)
-      navigate('/home'); // replace with your next route
-    }, 4000);
+    const timer = setTimeout(savePersonaAndNavigate, 4000);
 
     return () => clearTimeout(timer);
-  }, [persona, navigate]);
+  }, [persona, navigate, personaId, isAuthenticated, user]);
 
   if (!persona) return null;
 
