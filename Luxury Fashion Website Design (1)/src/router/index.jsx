@@ -3,7 +3,7 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
 // Layout
-import MainLayout from '../components/layouts/MainLayout';
+import MainLayout from '../layouts/MainLayout';
 
 // Pages
 import { LandingPage } from '../pages/LandingPage';
@@ -15,6 +15,7 @@ import { ProductDetail } from '../pages/ProductDetail';
 import VirtualTryOn from '../pages/VirtualTryOn';
 import Checkout from '../pages/Checkout';
 import { Login } from '../pages/Login';
+import { Register } from '../pages/Register';
 import { Cart } from '../pages/Cart';
 
 export const router = createBrowserRouter([
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
 
       // Auth
       { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
 
       // Cart
       { path: 'cart', element: <Cart /> },
