@@ -31,8 +31,8 @@ export function AuthProvider({ children }) {
     localStorage.setItem("auth_token", token);
     localStorage.setItem("user_data", JSON.stringify(userData));
     setUser(userData);
-    console.log("🔑 Login successful! Token:", token);
-    console.log("👤 User:", userData);
+    console.log("Login successful! Token:", token);
+    console.log("User:", userData);
   };
 
   // Logout function - clears token and user data
@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
     setUser(null);
-    console.log("👋 Logged out");
+    console.log("Logged out");
   };
 
   // Update user data (after selecting persona)

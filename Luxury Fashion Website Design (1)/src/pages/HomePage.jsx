@@ -98,7 +98,7 @@ export function HomePage({ personaId }) {
         </div>
       </nav>
 
-      {/* MAIN HERO */}
+      {/* MAIN TEXT */}
       <div className="pt-[136px] pb-[40px] px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div

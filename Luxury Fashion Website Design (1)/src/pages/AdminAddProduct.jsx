@@ -96,8 +96,8 @@ export function AdminAddProduct() {
         colors: productData.colors.filter((c) => c.name && c.hex),
       };
 
-      // Here you would normally send to backend API
-      // For now, we'll save to localStorage
+      // This part I need send to info back to backend API
+      // For now, I'll save to localStorage
       const existingProducts = JSON.parse(
         localStorage.getItem("products") || "[]"
       );

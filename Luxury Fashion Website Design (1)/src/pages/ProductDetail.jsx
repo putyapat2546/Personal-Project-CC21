@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
@@ -6,7 +6,8 @@ import { ShoppingBag, Heart, ChevronLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useCart } from '../context/CartContext';
 import { UserMenu } from '../components/UserMenu';
-const productsData = {
+
+const mockProductsData = {
   1: {
     id: 1,
     name: 'Silk Evening Gown',
@@ -76,12 +77,114 @@ export function ProductDetail() {
   const navigate = useNavigate();
   const { addToCart, cartCount } = useCart();
 
-  const product = productsData[productId] || productsData[1];
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+
+  // Helper function to get color hex codes
+  const getColorHex = (colorName) => {
+    const colorMap = {
+      'Black': '#000000',
+      'Navy': '#1a1a2e',
+      'Burgundy': '#800020',
+      'Charcoal': '#36454f',
+      'Brown': '#654321',
+      'Tan': '#d2b48c',
+      'Beige': '#f5f5dc',
+      'White': '#ffffff',
+      'Nude': '#e4b5a8',
+      'Ivory': '#fffff0',
+      'Gray': '#808080',
+      'Gold': '#ffd700',
+      'Silver': '#c0c0c0',
+      'Camel': '#c19a6b',
+      'Multicolor': 'linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1)',
+    };
+    return colorMap[colorName] || '#808080';
+  };
+
+  // Helper function to get product image
+  const getProductImage = (productName) => {
+    const imageMap = {
+      'Silk Evening Gown': 'https://images.unsplash.com/photo-1572533177115-5bea803c0f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Tailored Blazer': 'https://images.unsplash.com/photo-1704775986777-b903cf6b9802?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Leather Handbag': 'https://images.unsplash.com/photo-1575201046471-082b5c1a1e79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Cashmere Coat': 'https://images.unsplash.com/photo-1679419930974-e8171969aea0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Couture Dress': 'https://images.unsplash.com/photo-1756483492084-05cb91948081?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Designer Heels': 'https://images.unsplash.com/photo-1733736075345-55db261a8ac0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Silk Blouse': 'https://images.unsplash.com/photo-1759090987847-7d2b25beb2f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Wool Trousers': 'https://images.unsplash.com/photo-1546249511-259f23599066?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Evening Clutch': 'https://images.unsplash.com/photo-1760624294504-211e763ee0fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Cashmere Sweater': 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Leather Loafers': 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Silk Scarf': 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    };
+    return imageMap[productName] || 'https://images.unsplash.com/photo-1572533177115-5bea803c0f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
+  };
+
+  // Fetch product details
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3001/api/products/${productId}`);
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+        const data = await response.json();
+        
+        // Get all products with same name to collect all colors
+        const allProductsResponse = await fetch('http://localhost:3001/api/products');
+        const allProducts = await allProductsResponse.json();
+        
+        const sameNameProducts = allProducts.filter(p => p.product_name === data.product_name);
+        const colors = sameNameProducts.map(p => ({
+          name: p.color,
+          hex: getColorHex(p.color)
+        }));
+        
+        const transformedProduct = {
+          id: data.product_id,
+          name: data.product_name,
+          category: data.category,
+          price: data.price,
+          brand: data.brand?.brand_name || 'Unknown',
+          colors: colors,
+          gender: 'Unisex',
+          images: [getProductImage(data.product_name)],
+          description: `Experience luxury with this exquisite ${data.product_name.toLowerCase()} from ${data.brand?.brand_name || 'our collection'}. Crafted with attention to detail and premium materials.`,
+          details: [
+            'Premium quality materials',
+            'Dry clean only',
+            'Made with care',
+            'Timeless design',
+            'Expert craftsmanship'
+          ],
+          sizes: data.category === 'Accessories' ? ['One Size'] : ['XS', 'S', 'M', 'L', 'XL']
+        };
+        
+        setProduct(transformedProduct);
+        setSelectedColor(transformedProduct.colors[0]);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError(err.message);
+        // Fallback to mock data
+        const fallbackProduct = mockProductsData[productId] || mockProductsData[1];
+        setProduct(fallbackProduct);
+        setSelectedColor(fallbackProduct.colors[0]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -92,6 +195,34 @@ export function ProductDetail() {
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center">
+        <p className="text-gray-500" style={{ fontSize: '1.125rem' }}>
+          Loading product...
+        </p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4" style={{ fontSize: '1.125rem' }}>
+            Product not found
+          </p>
+          <button
+            onClick={() => navigate('/products')}
+            className="text-[#C6A664] hover:text-black transition-colors"
+          >
+            Back to Collections
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F8F8]">

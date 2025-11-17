@@ -13,6 +13,8 @@ export function LandingPage() {
   };
 
   return (
+
+    // BG ANIMATION
     <AnimatePresence>
       {!isExiting && (
         <motion.div

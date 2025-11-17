@@ -19,7 +19,8 @@ app.use(rateLimit({
 app.use(helmet())
 
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"], // allowed origins
+  origin: [//"http://localhost:5173"
+  "http://localhost:3000"], // allowed origins
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // allow cookies if needed
 }));
