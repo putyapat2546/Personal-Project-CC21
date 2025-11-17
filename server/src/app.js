@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import morgan from 'morgan'
 import authRoute from './routes/auth.route.js'
+import productRoute from './routes/product.route.js'
 import createHttpError from 'http-errors'
 import errorMiddleware from './middlewares/error.middleware.js'
 import notFoundMiddleware from './middlewares/notFound.middleware.js'
@@ -26,7 +27,7 @@ app.use(cors({
 app.use(express.json())
 
 app.use('/api/auth', authRoute)
-
+app.use('/api/products', productRoute)
 
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)

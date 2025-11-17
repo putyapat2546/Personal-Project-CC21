@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
@@ -6,7 +6,7 @@ import { ShoppingBag, X, SlidersHorizontal } from "lucide-react";
 import { Checkbox } from "../components/ui/checkbox";
 import { UserMenu } from "../components/UserMenu";
 
-const products = [
+const mockProducts = [
   {
     id: 1,
     name: "Silk Evening Gown",
@@ -187,8 +187,101 @@ export function ProductListing() {
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedGenders, setSelectedGenders] = useState([]);
   const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+
+  // Helper function to get color hex codes
+  const getColorHex = (colorName) => {
+    const colorMap = {
+      'Black': '#000000',
+      'Navy': '#1a1a2e',
+      'Burgundy': '#800020',
+      'Charcoal': '#36454f',
+      'Brown': '#654321',
+      'Tan': '#d2b48c',
+      'Beige': '#f5f5dc',
+      'White': '#ffffff',
+      'Nude': '#e4b5a8',
+      'Ivory': '#fffff0',
+      'Gray': '#808080',
+      'Gold': '#ffd700',
+      'Silver': '#c0c0c0',
+      'Camel': '#c19a6b',
+      'Multicolor': 'linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1)',
+    };
+    return colorMap[colorName] || '#808080';
+  };
+
+  // Helper function to get product image based on name and category
+  const getProductImage = (productName, category) => {
+    const imageMap = {
+      'Silk Evening Gown': 'https://images.unsplash.com/photo-1572533177115-5bea803c0f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Tailored Blazer': 'https://images.unsplash.com/photo-1704775986777-b903cf6b9802?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Leather Handbag': 'https://images.unsplash.com/photo-1575201046471-082b5c1a1e79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Cashmere Coat': 'https://images.unsplash.com/photo-1679419930974-e8171969aea0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Couture Dress': 'https://images.unsplash.com/photo-1756483492084-05cb91948081?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Designer Heels': 'https://images.unsplash.com/photo-1733736075345-55db261a8ac0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Silk Blouse': 'https://images.unsplash.com/photo-1759090987847-7d2b25beb2f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Wool Trousers': 'https://images.unsplash.com/photo-1546249511-259f23599066?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Evening Clutch': 'https://images.unsplash.com/photo-1760624294504-211e763ee0fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Cashmere Sweater': 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Leather Loafers': 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'Silk Scarf': 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    };
+    return imageMap[productName] || 'https://images.unsplash.com/photo-1572533177115-5bea803c0f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
+  };
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3001/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        
+        // Group products by product_name to consolidate colors
+        const groupedProducts = {};
+        data.forEach(product => {
+          const key = product.product_name;
+          if (!groupedProducts[key]) {
+            groupedProducts[key] = {
+              id: product.product_id,
+              name: product.product_name,
+              category: product.category,
+              price: product.price,
+              brand: product.brand?.brand_name || 'Unknown',
+              availableColors: [],
+              gender: 'Unisex',
+              image: getProductImage(product.product_name, product.category)
+            };
+          }
+          if (product.color) {
+            groupedProducts[key].availableColors.push({
+              name: product.color,
+              hex: getColorHex(product.color)
+            });
+          }
+        });
+        
+        setProducts(Object.values(groupedProducts));
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError(err.message);
+        setProducts(mockProducts);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const categories = Array.from(new Set(products.map((p) => p.category)));
   const allColors = Array.from(
@@ -483,6 +576,23 @@ export function ProductListing() {
         </AnimatePresence>
 
         <main className="px-8 py-4 max-w-7xl mx-auto">
+          {loading && (
+            <div className="flex justify-center items-center py-20">
+              <p className="text-gray-500" style={{ fontSize: "1.125rem" }}>
+                Loading products...
+              </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex justify-center items-center py-20">
+              <p className="text-red-500" style={{ fontSize: "1.125rem" }}>
+                Error: {error}. Using fallback data.
+              </p>
+            </div>
+          )}
+
+          {!loading && (
           <div className="grid grid-cols-4 gap-6 pb-16">
             {filteredProducts.map((product, index) => (
               <motion.div
@@ -568,7 +678,7 @@ export function ProductListing() {
               </motion.div>
             ))}
 
-            {filteredProducts.length === 0 && (
+            {filteredProducts.length === 0 && !loading && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -590,6 +700,7 @@ export function ProductListing() {
               </motion.div>
             )}
           </div>
+          )}
         </main>
       </div>
     </div>
