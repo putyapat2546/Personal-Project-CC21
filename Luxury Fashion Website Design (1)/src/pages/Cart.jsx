@@ -1,10 +1,11 @@
 import React from "react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { Minus, Plus, X, ShoppingBag, User } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { UserMenu } from "../components/UserMenu";
 
 export function Cart() {
   const navigate = useNavigate();
@@ -40,12 +41,7 @@ export function Cart() {
               Continue Shopping
             </button>
 
-            <button
-              onClick={() => navigate("/login")}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            <UserMenu />
           </div>
         </div>
       </nav>

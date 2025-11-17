@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
     console.log("👋 Logged out");
   };
 
-  // Update user data (e.g., after selecting persona)
+  // Update user data (after selecting persona)
   const updateUser = (userData) => {
     localStorage.setItem("user_data", JSON.stringify(userData));
     setUser(userData);

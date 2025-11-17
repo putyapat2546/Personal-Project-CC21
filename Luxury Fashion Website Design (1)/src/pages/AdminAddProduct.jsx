@@ -3,7 +3,8 @@ import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { User, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
+import { UserMenu } from "../components/UserMenu";
 
 export function AdminAddProduct() {
   const navigate = useNavigate();
@@ -142,12 +143,7 @@ export function AdminAddProduct() {
               View Products
             </button>
 
-            <button
-              onClick={() => navigate("/login")}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            <UserMenu />
           </div>
         </div>
       </nav>

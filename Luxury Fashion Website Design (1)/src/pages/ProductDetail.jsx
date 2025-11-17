@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { ShoppingBag, User, Heart, ChevronLeft } from 'lucide-react';
+import { ShoppingBag, Heart, ChevronLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useCart } from '../context/CartContext';
+import { UserMenu } from '../components/UserMenu';
 const productsData = {
   1: {
     id: 1,
@@ -140,12 +141,8 @@ export function ProductDetail() {
               <ShoppingBag size={20} />
             </button>
 
-            <button
-              onClick={() => navigate('/login')}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            {/* User Menu */}
+            <UserMenu />
           </div>
         </div>
       </nav>

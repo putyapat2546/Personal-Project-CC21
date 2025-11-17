@@ -168,6 +168,8 @@ export function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 1.5 }}
               onClick={handleEnter}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
               className="mt-12 px-12 py-4 relative group overflow-hidden border border-[#C6A664] text-[#C6A664] uppercase tracking-wider font-medium"
             >
               {/* overlay behind content using negative z-index */}

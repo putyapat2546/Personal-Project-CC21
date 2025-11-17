@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { ShoppingBag, User } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Slider } from "../components/ui/slider";
 import { useNavigate } from "react-router-dom";
+import { UserMenu } from "../components/UserMenu";
 
 const clothingItems = [
   { id: "dress1", name: "Silk Gown", category: "dress", image: "https://images.unsplash.com/photo-1572533177115-5bea803c0f49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" },
@@ -64,12 +65,7 @@ export default function VirtualTryOn() {
               <ShoppingBag size={20} />
             </button>
 
-            <button
-              onClick={() => navigate("/login")}
-              className="text-black hover:text-[#C6A664] transition-colors"
-            >
-              <User size={20} />
-            </button>
+            <UserMenu />
           </div>
         </div>
       </nav>
