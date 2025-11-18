@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in on mount
+  // Check if user is already login
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
     const savedUser = localStorage.getItem("user_data");

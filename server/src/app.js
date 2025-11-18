@@ -13,14 +13,13 @@ import shutdownUtil from './utils/shutdown.util.js'
 const app = express()
 app.use(morgan("dev"))
 app.use(rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max : 100,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max : 100, // max requests per IP in windowMs
 }))
 app.use(helmet())
 
 app.use(cors({
-  origin: [//"http://localhost:5173"
-  "http://localhost:3000"], // allowed origins
+  origin: ["http://localhost:5173", "http://localhost:3000"], // allowed origins
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // allow cookies if needed
 }));

@@ -428,18 +428,18 @@ export function ProductListing() {
                 GENDER
             </h3>
             <div className="space-y-2">
-                {["Women", "Men", "Unisex"].map((g) => (
+                {["Women", "Men", "Unisex"].map((gender) => (
                     <label
-                        key={g}
+                        key={gender}
                         className="flex items-center gap-3 cursor-pointer hover:text-black transition-colors"
                     >
                         <Checkbox
-                            checked={selectedGenders.includes(g)}
+                            checked={selectedGenders.includes(gender)}
                             onCheckedChange={() =>
-                                toggleFilter(g, selectedGenders, setSelectedGenders)
+                                toggleFilter(gender, selectedGenders, setSelectedGenders)
                             }
                         />
-                        <span className="text-sm text-gray-700">{g}</span>
+                        <span className="text-sm text-gray-700">{gender}</span>
                     </label>
                 ))}
             </div>

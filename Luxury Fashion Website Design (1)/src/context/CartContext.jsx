@@ -19,8 +19,8 @@ export function CartProvider({ children }) {
   }, [cartItems]);
 
   // Add product to cart
-  // If same product with same size/color exists, increment quantity
-  // Otherwise, add as new item
+  // If same product with same size/color exists, increase quantity
+  // Or, add as new item
   const addToCart = (product, selectedSize, selectedColor) => {
     setCartItems((prevItems) => {
       // Check if item with same product, size, and color already exists
@@ -71,7 +71,7 @@ export function CartProvider({ children }) {
     );
   };
 
-  // Remove all items from cart (useful for after checkout)
+  // Remove all items from cart 
   const clearCart = () => {
     setCartItems([]);
   };
@@ -98,7 +98,7 @@ export function CartProvider({ children }) {
 }
 
 // Custom hook to use cart context in any component
-// Usage: const { cartItems, addToCart } = useCart();
+// const { cartItems, addToCart } = useCart();
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
